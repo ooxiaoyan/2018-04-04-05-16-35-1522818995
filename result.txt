@@ -1,0 +1,62 @@
+practice1
+
++----+------------+------+----------+-----------+--------+
+| id | name       | age  | gender   | companyId | salary |
++----+------------+------+----------+-----------+--------+
+|  1 | 'xiaohong' |   19 | 'female' |         1 |   7000 |
++----+------------+------+----------+-----------+--------+
+
+SELECT * FROM Employee WHERE `name` LIKE '%n%' AND salary > 6000
+
+practice2
+
++-------------+--------------+
+| companyName | name         |
++-------------+--------------+
+| 'baidu'     | 'xiaoming'   |
+| 'alibaba'   | 'xiaohong'   |
+| 'tengxun'   | 'xiaozhi'    |
++-------------+--------------+
+
+SELECT companyName,name
+FROM
+(SELECT company.id,companyName,MAX(salary) as maxsal
+FROM employee,company
+where employee.companyId = company.id
+GROUP BY company.id,companyName) as a,employee as e
+where a.id = e.companyId AND maxsal = e.salary
+
+
+practice3
+
++-------------+-----------+
+| companyName | avgSalary |
++-------------+-----------+
+| 'tengxun'   | 8000.0000 |
++-------------+-----------+
+
+SELECT companyName,AVG(salary) as avgSalary
+FROM company,employee
+WHERE company.id = employee.companyId
+GROUP BY companyName
+ORDER BY avgSalary DESC
+LIMIT 1
+
+
+practice4
+
++----+--------------+------+----------+-----------+--------+-------------+-----------+
+| id | name         | age  | gender   | companyId | salary |companyName | avgsal    |
++----+--------------+------+----------+-----------+--------+-------------+-----------+
+|  0 | 'xiaoming'   |   20 | 'male'   |         0 |   6000 | 'baidu'     | 5000.0000 |
+|  1 | 'xiaohong'   |   19 | 'female' |         1 |   7000 | 'alibaba'   | 6500.0000 |
+|  2 | 'xiaozhi'    |   15 | 'male'   |         2 |   8000 | 'tengxun'   | 8000.0000 |
++----+--------------+------+----------+-----------+--------+-------------+-----------+
+
+SELECT employee.*,companyName,avgsal
+FROM
+(SELECT companyId,companyName,AVG(salary) as avgsal
+FROM company,employee
+WHERE company.id = employee.companyId
+GROUP BY companyId,companyName) as a,employee
+WHERE employee.companyId = a.companyId AND employee.salary >= avgsal
